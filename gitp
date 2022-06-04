@@ -1,0 +1,56 @@
+#!/bin/bash
+
+# todo why do I need this?
+source ../.dotfiles/zsh/.functions
+
+# push upstream to current branch name, if on master ask if that's ok
+
+# if there are no changes, exit
+if [[ $(git status --porcelain) == "" ]]; then
+    echo "No changes to push"
+    exit 0
+fi
+
+# if on master or main branch
+branch=$(git rev-parse --abbrev-ref HEAD)
+if [ "$branch" = "master" ] || [ "$branch" = "main" ]; then
+    echo -n "Are you sure you want to push to master|main? (y/n) "
+    read -r answer
+    if ! [[ $answer =~ ^([yY][eE][sS]|[yY])$ ]]; then
+        exit 0
+    fi
+fi
+
+git add -A
+
+commitTypeOpts=("fix" "feat" "docs" "style" "refactor" "test" "chore" "revert" "WIP" "cancel")
+
+select_option "${commitTypeOpts[@]}"
+chosenStr=${commitTypeOpts[$?]}
+if [ "$chosenStr" = "cancel" ]; then
+    exit 0
+fi
+
+echo -n "Enter a commit message: "
+read -r commit_message
+
+ticketNum=$(getbranchticketnumber)
+
+fullMessage="$chosenStr: $ticketNum$commit_message"  
+
+echo "Making commit as:"
+echo "$fullMessage"
+echo "Are you sure? (y/N) "
+read -r  confirm
+if [[ $answer =~ ^([yY][eE][sS]|[yY])$ ]]; then
+    git commit -m "$fullMessage"
+
+    # check if branch has upstream
+    if ! git rev-parse --verify --quiet @{upstream} > /dev/null; then
+        echo "Creating upstream branch"
+        git push -u origin "${branch}"
+        exit 0
+    fi
+
+    git push origin "$(git rev-parse --abbrev-ref HEAD)"
+fi
