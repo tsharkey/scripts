@@ -27,7 +27,8 @@ function select_option {
     for opt; do printf "\n"; done
 
     # determine current screen position for overwriting the options
-    local lastrow=$(get_cursor_row)
+    local lastrow
+    lastrow=$(get_cursor_row)
     local startrow=$(($lastrow - $#))
 
     # ensure cursor and input echoing back on upon a ctrl+c during read -s
@@ -72,7 +73,7 @@ getbranchticketnumber() {
         echo ""
         return
     fi
-    echo $(git rev-parse --abbrev-ref HEAD | sed 's/\./ /g' | awk '{print $1 }')
+    echo "$(git rev-parse --abbrev-ref HEAD | sed 's/\./ /g' | awk '{print $1 }')"
 }
 
 # push upstream to current branch name, if on master ask if that's ok
@@ -113,7 +114,7 @@ fullMessage="$chosenStr: $ticketNum$commit_message"
 printf "Making commit as:\n\n"
 printf "\t$fullMessage"
 printf "\n\nAre you sure? (y/N) "
-read -r  confirm
+read -r answer
 if [[ $answer =~ ^([yY][eE][sS]|[yY])$ ]]; then
     git commit -m "$fullMessage"
 
