@@ -66,6 +66,15 @@ function select_option {
     return $selected
 }
 
+
+getbranchticketnumber() {
+    if ! [[ $(git rev-parse --abbrev-ref HEAD) == *"."* ]]; then
+        echo ""
+        return
+    fi
+    echo $(git rev-parse --abbrev-ref HEAD | sed 's/\./ /g' | awk '{print $1 }')
+}
+
 # push upstream to current branch name, if on master ask if that's ok
 
 # if there are no changes, exit
@@ -101,9 +110,9 @@ ticketNum=$(getbranchticketnumber)
 
 fullMessage="$chosenStr: $ticketNum$commit_message"  
 
-echo "Making commit as:"
-echo "$fullMessage"
-echo "Are you sure? (y/N) "
+printf "Making commit as:\n\n"
+printf "\t$fullMessage"
+printf "\n\nAre you sure? (y/N) "
 read -r  confirm
 if [[ $answer =~ ^([yY][eE][sS]|[yY])$ ]]; then
     git commit -m "$fullMessage"
