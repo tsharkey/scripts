@@ -8,6 +8,8 @@ from github import Github
 from simple_term_menu import TerminalMenu
 from termcolor import colored
 
+from util.githelpers import *
+
 
 def get_change_types():
     return ['fix', 'feat', 'mod', 'chore', 'docs']
@@ -28,34 +30,6 @@ def get_change_types():
 #     "cancel: Exit the process"
 # }
 
-# check if repo has changes
-
-
-def has_changes(repo=Repo(".")):
-    return repo.is_dirty(untracked_files=True)
-
-# check if on master or main
-
-
-def is_on_default(remote, local=Repo(".")):
-    return local.active_branch.name == remote.default_branch
-
-
-def needs_pull(repo=Repo(".")):
-    repo_status = repo.git.status(porcelain="v2", branch=True)
-    behind_match = re.search(r"#\sbranch\.ab\s\+(\d+)\s-(\d+)", repo_status)
-    return behind_match and behind_match.group(2) != "0"
-
-
-def needs_push(repo=Repo(".")):
-    repo_status = repo.git.status(porcelain="v2", branch=True)
-    ahead_match = re.search(r"#\sbranch\.ab\s\+(\d+)\s-(\d+)", repo_status)
-    return ahead_match and ahead_match.group(1) != "0"
-
-
-def get_repo_full_name(repo=Repo(".")):
-    return repo.remotes.origin.url.split('.git')[0].split(':')[-1]
-
 
 def ensure_access_token():
     gat = os.getenv('GH_ACCESS_TOKEN')
@@ -63,13 +37,6 @@ def ensure_access_token():
         print(colored("GH_ACCESS_TOKEN not set", "red"))
         exit(1)
     return gat
-
-
-def get_branch_ticket_number(branch_name=Repo(".").active_branch.name):
-    splits = branch_name.split('.')
-    if len(splits) > 1:
-        return splits[0]+": "
-    return ""
 
 
 def get_change_type(options=get_change_types()):
@@ -91,7 +58,7 @@ def build_commit_message(active_branch_name=Repo(".").active_branch.name, change
 
     return builder
 
-    ####### BEGIN SCRIPT #######
+####### BEGIN SCRIPT #######
 
 
 gat = ensure_access_token()
