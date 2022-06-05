@@ -10,4 +10,5 @@
 - figure out how to do menu select with hints
 - add all different semantic change types
 - add script for grebase
-- add force option for gitp
+  - should also force push branch
+- for gitp show a list of which files are being changed and added to the commit

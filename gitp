@@ -28,7 +28,20 @@ from termcolor import colored
 
 from pyutils.githelpers import *
 
-change_types = ['fix', 'feat', 'mod', 'chore', 'docs']
+change_types = [
+    "fix: Bug fix for the user, not a fix to a build script",
+    "feat: New feature for the user, not a new feature for build script",
+    "chore: Updating grunt tasks etc; no production code change",
+    "docs: Documentation only changes",
+    "WIP: Work in progress",
+    "refactor: refactoring production code, eg. renaming a variable",
+    "test: adding missing tests, refactoring tests; no production code change",
+    "build: Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)",
+    "ci: Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs)",
+    "perf: A code change that improves performance",
+    "style: formatting, missing semi colons, etc; no production code change",
+    "cancel: Cancel"
+]
 
 # change_types = {
 #     "fix: Bug fix for the user, not a fix to a build script",
@@ -55,7 +68,9 @@ def get_change_type(options=change_types):
     terminal_menu = TerminalMenu(
         options, show_search_hint=True, search_key=None)
     change_type_index = terminal_menu.show()
-    return options[change_type_index] + ": "
+    change_type = options[change_type_index]
+    short_type = change_type.split(":")[0]
+    return short_type + ": "
 
 
 def build_commit_message(local=Repo(".")):
