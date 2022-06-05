@@ -1,14 +1,12 @@
 #!/usr/bin/python3
 
-from distutils.log import debug
-from operator import index
-from threading import local
-from git import Repo
-from github import Github
-from termcolor import colored
-from simple_term_menu import TerminalMenu
 import os
 import re
+
+from git import Repo
+from github import Github
+from simple_term_menu import TerminalMenu
+from termcolor import colored
 
 
 def get_change_types():

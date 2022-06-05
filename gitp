@@ -76,6 +76,11 @@ getbranchticketnumber() {
     echo "$(git rev-parse --abbrev-ref HEAD | sed 's/\./ /g' | awk '{print $1 }')"
 }
 
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
+echo -e "${RED}gitp is deprecated in favor of gflow, please use that instead${NC}"
+
 # push upstream to current branch name, if on master ask if that's ok
 
 # if there are no changes, exit
