@@ -1,5 +1,6 @@
 import os
 import re
+import sys
 
 from git import Repo
 from termcolor import colored
@@ -21,6 +22,7 @@ def is_on_default(remote, local=Repo(".")):
     return local.active_branch.name == remote.default_branch
 
 
+# TODO this needs to check against the default branch of the remote
 def needs_pull(repo=Repo(".")):
     """needs_pull
     Returns True if the local repo is behind the remote.
@@ -29,6 +31,8 @@ def needs_pull(repo=Repo(".")):
     repo_status = repo.git.status(porcelain="v2", branch=True)
     behind_match = re.search(r"#\sbranch\.ab\s\+(\d+)\s-(\d+)", repo_status)
     return behind_match and behind_match.group(2) != "0"
+
+# TODO this needs to check against the default branch of the remote
 
 
 def needs_push(repo=Repo(".")):
@@ -44,6 +48,7 @@ def needs_push(repo=Repo(".")):
 def get_repo_full_name(repo=Repo(".")):
     """get_repo_full_name
     Returns the full name of the repo.
+    ex: tsharkey/scripts
     """
 
     return repo.remotes.origin.url.split('.git')[0].split(':')[-1]
@@ -62,12 +67,12 @@ def get_branch_ticket_number(branch_name=Repo(".").active_branch.name):
 
 
 def get_access_token():
-    """ensure_access_token
+    """get_access_token
     Gets a github access token from an environment variable
     """
 
     gat = os.getenv('GH_ACCESS_TOKEN')
     if not gat:
         print(colored("GH_ACCESS_TOKEN not set", "red"))
-        exit(1)
+        sys.exit(1)
     return gat

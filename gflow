@@ -1,5 +1,25 @@
 #!/usr/bin/python3
 
+# ----------------------------------------------------------------------------------------------------------------------
+# gflow
+#
+# a script that goes through a flow of adding a commit and ensures that commit messages have the correct format
+#
+# Requirements:
+#  - git
+#  - github personal access token set as an environment variable GH_ACCESS_TOKEN
+#
+# Flow:
+# - add changes
+# - get commit message
+# - ask what type of change it is [fix, feat, mod, chore, docs, etc]
+# - get ticket number if it is part of the branch name
+#   - branch names should be in the format <ticket number>.<branch name>
+# - build message (ticket number + change type + message)
+# - commit
+# - push to remote
+# ----------------------------------------------------------------------------------------------------------------------
+
 import sys
 
 from git import Repo
@@ -9,9 +29,7 @@ from termcolor import colored
 
 from pyutils.githelpers import *
 
-
-def get_change_types():
-    return ['fix', 'feat', 'mod', 'chore', 'docs']
+change_types = ['fix', 'feat', 'mod', 'chore', 'docs']
 
 # change_types = {
 #     "fix: Bug fix for the user, not a fix to a build script",
@@ -30,22 +48,18 @@ def get_change_types():
 # }
 
 
-def get_change_type(options=get_change_types()):
+def get_change_type(options=change_types):
     terminal_menu = TerminalMenu(
         options, show_search_hint=True, search_key=None)
     change_type_index = terminal_menu.show()
     return options[change_type_index] + ": "
 
 
-def build_commit_message(active_branch_name=Repo(".").active_branch.name, change_types=get_change_types(), ticket_number=get_branch_ticket_number(), message=None):
+def build_commit_message():
     builder = ""
-
-    if not message:
-        message = input("Enter commit message: ")
-
-    builder += ticket_number
+    builder += get_branch_ticket_number()
     builder += get_change_type()
-    builder += message
+    builder += input("Enter commit message: ")
 
     return builder
 
