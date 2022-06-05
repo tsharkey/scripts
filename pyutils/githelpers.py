@@ -1,6 +1,8 @@
+import os
 import re
 
 from git import Repo
+from termcolor import colored
 
 
 def has_changes(repo=Repo(".")):
@@ -57,3 +59,15 @@ def get_branch_ticket_number(branch_name=Repo(".").active_branch.name):
     if len(splits) > 1:
         return splits[0]+": "
     return ""
+
+
+def get_access_token():
+    """ensure_access_token
+    Gets a github access token from an environment variable
+    """
+
+    gat = os.getenv('GH_ACCESS_TOKEN')
+    if not gat:
+        print(colored("GH_ACCESS_TOKEN not set", "red"))
+        exit(1)
+    return gat

@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 
-import os
 import sys
 
 from git import Repo
@@ -31,14 +30,6 @@ def get_change_types():
 # }
 
 
-def ensure_access_token():
-    gat = os.getenv('GH_ACCESS_TOKEN')
-    if not gat:
-        print(colored("GH_ACCESS_TOKEN not set", "red"))
-        exit(1)
-    return gat
-
-
 def get_change_type(options=get_change_types()):
     terminal_menu = TerminalMenu(
         options, show_search_hint=True, search_key=None)
@@ -61,7 +52,7 @@ def build_commit_message(active_branch_name=Repo(".").active_branch.name, change
 ####### BEGIN SCRIPT #######
 
 
-gat = ensure_access_token()
+gat = get_access_token()
 
 g = Github(gat)
 local_repo = Repo(".")
@@ -69,7 +60,8 @@ remote_repo = g.get_repo(get_repo_full_name(local_repo))
 
 if is_on_default(remote_repo):
     answer = input(colored(
-        "WARN: You are on the default branch... are you sure you want to continue? (y/n) ", "yellow"))
+        "WARN: You are on the default branch..." +
+        " are you sure you want to continue? (y/n) ", "yellow"))
     if answer != "y":
         print("Okay...")
         sys.exit(0)
