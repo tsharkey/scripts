@@ -23,7 +23,6 @@
 import sys
 
 from git import Repo
-from github import Github
 from simple_term_menu import TerminalMenu
 from termcolor import colored
 
@@ -49,15 +48,23 @@ change_types = ['fix', 'feat', 'mod', 'chore', 'docs']
 
 
 def get_change_type(options=change_types):
+    """get_change_type
+    Gets the change type from the user.
+    """
+
     terminal_menu = TerminalMenu(
         options, show_search_hint=True, search_key=None)
     change_type_index = terminal_menu.show()
     return options[change_type_index] + ": "
 
 
-def build_commit_message():
+def build_commit_message(local=Repo(".")):
+    """build_commit_message
+    Builds the commit message based on the change type and the ticket number.
+    """
+
     builder = ""
-    builder += get_branch_ticket_number()
+    builder += get_branch_ticket_number(local.active_branch.name)
     builder += get_change_type()
     builder += input("Enter commit message: ")
 
@@ -66,13 +73,9 @@ def build_commit_message():
 ####### BEGIN SCRIPT #######
 
 
-gat = get_access_token()
-
-g = Github(gat)
 local_repo = Repo(".")
-remote_repo = g.get_repo(get_repo_full_name(local_repo))
 
-if is_on_default(remote_repo):
+if is_on_default(local_repo):
     answer = input(colored(
         "WARN: You are on the default branch..." +
         " are you sure you want to continue? (y/n) ", "yellow"))
@@ -80,8 +83,6 @@ if is_on_default(remote_repo):
         print("Okay...")
         sys.exit(0)
 
-
-# commit all changes
 if has_changes(local_repo):
     commit_message = build_commit_message()
     print("Committing changes... with message: " + commit_message)

@@ -3,6 +3,7 @@ import re
 import sys
 
 from git import Repo
+from github import Github
 from termcolor import colored
 
 
@@ -14,12 +15,14 @@ def has_changes(repo=Repo(".")):
     return repo.is_dirty(untracked_files=True)
 
 
-def is_on_default(remote, local=Repo(".")):
+def is_on_default(local=Repo(".")):
     """is_on_default
     Returns True if the active local branch is the default branch of the remote.
     """
+    g = Github(get_access_token())
+    rem = g.get_repo(get_repo_full_name(local))
 
-    return local.active_branch.name == remote.default_branch
+    return local.active_branch.name == rem.default_branch
 
 
 # TODO this needs to check against the default branch of the remote
