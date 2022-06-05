@@ -1,0 +1,52 @@
+#!/usr/bin/python3
+
+import git
+from simple_term_menu import TerminalMenu
+
+from pyutils.githelpers import *
+
+ticket_number = input("Enter ticket number: ")
+desc = input("Enter description: ")
+
+if ticket_number == "":
+    print(colored("Ticket number is required", "red"))
+    sys.exit(1)
+
+if has_changes():
+    opts = [
+        "stash",
+        "commit",
+        "ignore",
+        "cancel"
+    ]
+
+    terminal_menu = TerminalMenu(
+        opts, show_search_hint=True, search_key=None)
+    opt_index = terminal_menu.show()
+    opt = opts[opt_index]
+    if opt == "stash":
+        print("Stashing changes...")
+        git.Git().stash()
+    elif opt == "commit":
+        if is_on_default():
+            print(colored("WARN: You are on the default branch..." +
+                          " are you sure you want to commit to this branch? (y/n) ", "yellow"))
+            answer = input()
+            if answer != "y":
+                print("Okay...")
+                sys.exit(0)
+
+        commit_message = input("Enter commit message: ")
+        print("Committing changes... with message: " + commit_message)
+        git.Git().add(A=True)
+        git.Git().commit(m=commit_message)
+    elif opt == "ignore":
+        print("Leaving changes...")
+        pass
+    elif opt == "cancel":
+        print("Okay...")
+        sys.exit(0)
+
+# create new branch with ticket number and description
+branch_name = ticket_number+"."+desc.replace(" ", "_")
+git.Git().checkout('-b', branch_name)
