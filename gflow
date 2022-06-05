@@ -1,0 +1,118 @@
+#!/usr/bin/python3
+
+from distutils.log import debug
+from operator import index
+from git import Repo
+from github import Github
+from termcolor import colored
+from simple_term_menu import TerminalMenu
+import os
+import re
+
+
+def get_change_types():
+    return ['fix', 'feat', 'mod', 'chore', 'docs']
+
+# change_types = {
+#     "fix: Bug fix for the user, not a fix to a build script",
+#     "feat: New feature for the user, not a new feature for build script",
+#     "refactor: Refactoring production code, eg. renaming a variable",
+#     "test: Adding missing tests, refactoring tests; no production code changet",
+#     "chore: Updating grunt tasks etc; no production code change",
+#     "docs: Changes to the documentation",
+#     "perf: A code change that improves performance",
+#     "style: Formatting, missing semi colons, etc; no production code change",
+#     "build: Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)",
+#     "ci: Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs)",
+#     "WIP: Work in progress",
+#     "revert: Revert a commit",
+#     "cancel: Exit the process"
+# }
+
+# check if repo has changes
+
+
+def has_changes(repo=Repo(".")):
+    return repo.is_dirty(untracked_files=True)
+
+# check if on master or main
+
+
+def is_on_default(remote, local=Repo(".")):
+    return local.active_branch.name == remote.default_branch
+
+
+def needs_pull(repo=Repo(".")):
+    repo_status = repo.git.status(porcelain="v2", branch=True)
+    behind_match = re.search(r"#\sbranch\.ab\s\+(\d+)\s-(\d+)", repo_status)
+    return behind_match and behind_match.group(2) != "0"
+
+
+def needs_push(repo=Repo(".")):
+    repo_status = repo.git.status(porcelain="v2", branch=True)
+    ahead_match = re.search(r"#\sbranch\.ab\s\+(\d+)\s-(\d+)", repo_status)
+    return ahead_match and ahead_match.group(1) != "0"
+
+
+def get_repo_full_name(repo=Repo(".")):
+    return repo.remotes.origin.url.split('.git')[0].split(':')[-1]
+
+
+def ensure_access_token():
+    gat = os.getenv('GH_ACCESS_TOKEN')
+    if not gat:
+        print(colored("GH_ACCESS_TOKEN not set", "red"))
+        exit(1)
+    return gat
+
+
+def get_branch_ticket_number(branch_name=Repo(".").active_branch.name):
+    splits = branch_name.split('.')
+    if len(splits) > 1:
+        return splits[0]+": "
+    return ""
+
+
+def get_change_type(options=get_change_types()):
+    terminal_menu = TerminalMenu(
+        options, show_search_hint=True, search_key=None)
+    change_type_index = terminal_menu.show()
+    return options[change_type_index] + ": "
+
+
+def build_commit_message(active_branch_name=Repo(".").active_branch.name, change_types=get_change_types(), ticket_number=get_branch_ticket_number(), message=None):
+    builder = ""
+
+    if not message:
+        message = input("Enter commit message: ")
+
+    builder += ticket_number
+    builder += get_change_type()
+    builder += message
+
+    return builder
+
+    ####### BEGIN SCRIPT #######
+
+
+gat = ensure_access_token()
+
+g = Github(gat)
+local_repo = Repo(".")
+remote_repo = g.get_repo(get_repo_full_name(local_repo))
+
+if is_on_default(remote_repo):
+    answer = input(colored(
+        "WARN: You are on the default branch... are you sure you want to continue? (y/n) ", "yellow"))
+    if answer != "y":
+        print("Okay...")
+        exit(0)
+
+
+# commit all changes
+if has_changes(local_repo):
+    commit_message = build_commit_message()
+    print("Committing changes... with message: " + commit_message)
+
+    local_repo.git.add(A=True)
+    local_repo.git.commit(m=commit_message)

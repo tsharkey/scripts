@@ -1,1 +1,3 @@
 # scripts
+
+TODO setup pyenv
