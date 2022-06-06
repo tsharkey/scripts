@@ -3,7 +3,7 @@ import os
 import jira
 
 
-def get_user_tickets(username, jira_api_token=os.getenv('JIRA_API_TOKEN')):
+def get_user_tickets(username, jira_api_token=os.getenv('JIRA_API_KEY')):
     """get_user_tickets
     Returns a list of tickets that the user is assigned to.
     """
