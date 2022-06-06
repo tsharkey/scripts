@@ -1,9 +1,10 @@
 #!/usr/bin/python3
 
-# ----------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------
 # gflow
 #
-# a script that goes through a flow of adding a commit and ensures that commit messages have the correct format
+# a script that goes through a flow of adding a commit and ensures
+# that commit messages have the correct format
 #
 # Requirements:
 #  - git
@@ -18,7 +19,7 @@
 # - build message (ticket number + change type + message)
 # - commit
 # - push to remote
-# ----------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------
 
 import sys
 
