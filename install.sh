@@ -12,3 +12,5 @@ if [ -d "$(pwd)" ] && [[ ":$PATH:" != *":$(pwd):"* ]]; then
     echo "Adding $(pwd) to PATH"
     export PATH=$PATH:$(pwd)
 fi
+
+pip install -r requirements.txt

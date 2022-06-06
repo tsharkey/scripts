@@ -1,4 +1,19 @@
-# scripts
+# Scripts
+A collection of scripts that I use daily
+
+# Install
+
+## Clone
+```
+git clone git@github.com/tsharkey/scripts
+```
+
+## install.sh
+```
+cd <path to this repo>
+
+sh install.sh
+```
 
 # TODO
 - setup pyenv
