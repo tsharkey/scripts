@@ -16,18 +16,19 @@ def build_branch_name(ticket_num, desc):
 
 tickets = get_user_tickets('tom@promoboxx.com')
 
-ticket_nums = [ticket.key for ticket in tickets]
-ticket_nums.append('None')
+ticket_opts = [
+    f'{ticket.key} - {ticket.fields.summary}' for ticket in tickets
+]
 
-full_tickets = [
-    f'{ticket.key} - {ticket.fields.summary}' for ticket in tickets]
+# Add a None option to the list to support branches without tickets
+ticket_opts.append('None')
 
-full_tickets.append("None")
-
-menu = TerminalMenu(full_tickets, show_search_hint=True,
+menu = TerminalMenu(ticket_opts, show_search_hint=True,
                     search_key=None, title="Select ticket to prefix branch with: ")
 ticket_index = menu.show()
-ticket_num = ticket_nums[ticket_index]
+choice = ticket_opts[ticket_index]
+
+ticket_num = choice.split(' ')[0].strip()
 
 desc = input("Enter description: ")
 
