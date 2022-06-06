@@ -4,13 +4,32 @@ import git
 from simple_term_menu import TerminalMenu
 
 from pyutils.githelpers import *
+from pyutils.jirahelpers import get_user_tickets
 
-ticket_number = input("Enter ticket number: ")
+
+def build_branch_name(ticket_num, desc):
+    if ticket_num == "None" or ticket_num == "":
+        return desc.replace(" ", "_")
+
+    return ticket_num+"."+desc.replace(" ", "_")
+
+
+tickets = get_user_tickets('tom@promoboxx.com')
+
+ticket_nums = [ticket.key for ticket in tickets]
+ticket_nums.append('None')
+
+full_tickets = [
+    f'{ticket.key} - {ticket.fields.summary}' for ticket in tickets]
+
+full_tickets.append("None")
+
+menu = TerminalMenu(full_tickets, show_search_hint=True,
+                    search_key=None, title="Select ticket to prefix branch with: ")
+ticket_index = menu.show()
+ticket_num = ticket_nums[ticket_index]
+
 desc = input("Enter description: ")
-
-if ticket_number == "":
-    print(colored("Ticket number is required", "red"))
-    sys.exit(1)
 
 if has_changes():
     opts = [
@@ -21,7 +40,7 @@ if has_changes():
     ]
 
     terminal_menu = TerminalMenu(
-        opts, show_search_hint=True, search_key=None)
+        opts, show_search_hint=True, search_key=None, title="What would you like to do with the changes? ")
     opt_index = terminal_menu.show()
     opt = opts[opt_index]
     if opt == "stash":
@@ -48,5 +67,5 @@ if has_changes():
         sys.exit(0)
 
 # create new branch with ticket number and description
-branch_name = ticket_number+"."+desc.replace(" ", "_")
+branch_name = build_branch_name(ticket_num, desc)
 git.Git().checkout('-b', branch_name)

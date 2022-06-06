@@ -43,22 +43,6 @@ change_types = [
     "cancel: Cancel"
 ]
 
-# change_types = {
-#     "fix: Bug fix for the user, not a fix to a build script",
-#     "feat: New feature for the user, not a new feature for build script",
-#     "refactor: Refactoring production code, eg. renaming a variable",
-#     "test: Adding missing tests, refactoring tests; no production code changet",
-#     "chore: Updating grunt tasks etc; no production code change",
-#     "docs: Changes to the documentation",
-#     "perf: A code change that improves performance",
-#     "style: Formatting, missing semi colons, etc; no production code change",
-#     "build: Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)",
-#     "ci: Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs)",
-#     "WIP: Work in progress",
-#     "revert: Revert a commit",
-#     "cancel: Exit the process"
-# }
-
 
 def get_change_type(options=change_types):
     """get_change_type
@@ -66,7 +50,8 @@ def get_change_type(options=change_types):
     """
 
     terminal_menu = TerminalMenu(
-        options, show_search_hint=True, search_key=None)
+        options, show_search_hint=True, search_key=None,
+        title="Select change type: ")
     change_type_index = terminal_menu.show()
     change_type = options[change_type_index]
     short_type = change_type.split(":")[0]
