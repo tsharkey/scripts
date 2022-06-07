@@ -8,7 +8,7 @@ def get_user_tickets(username, jira_api_token=os.getenv('JIRA_API_KEY')):
     Returns a list of tickets that the user is assigned to.
     """
 
-    project_query = 'project = "DEV"'
+    project_query = 'project = DEV'
 
     status_query = ('status in ("Backlog", "In Progress",'
                     '"Ready to Deploy", "Code Review", "Ready to Test", "To Do")')
@@ -19,4 +19,5 @@ def get_user_tickets(username, jira_api_token=os.getenv('JIRA_API_KEY')):
                   basic_auth=(username, jira_api_token))
 
     full_query = f'{project_query} AND {status_query} AND {assignee_query}'
+    print("Query: " + full_query)
     return j.search_issues(full_query)
