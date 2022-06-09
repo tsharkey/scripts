@@ -1,0 +1,15 @@
+#!/user/bin/env bash
+
+count=$(git log origin/master.. --pretty=format:'' | wc -l | xargs)
+count=$((count+1)) # have to increment by 1 to get full branch log
+git rebase -i HEAD~"$count"
+
+current_branch=$(git rev-parse --abbrev-ref HEAD)
+
+# prompt to force push
+echo "Force push to $current_branch? (y/n)"
+read -r answer
+if [ "$answer" = "y" ]; then
+    git push --force origin current_branch
+fi
+
