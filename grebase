@@ -1,4 +1,4 @@
-#!/user/bin/env bash
+#!/usr/bin/env bash
 
 count=$(git log origin/master.. --pretty=format:'' | wc -l | xargs)
 count=$((count+1)) # have to increment by 1 to get full branch log
@@ -10,6 +10,6 @@ current_branch=$(git rev-parse --abbrev-ref HEAD)
 echo "Force push to $current_branch? (y/n)"
 read -r answer
 if [ "$answer" = "y" ]; then
-    git push --force origin current_branch
+    git push --force origin "$current_branch"
 fi
 
