@@ -6,6 +6,14 @@ git rebase -i HEAD~"$count"
 
 current_branch=$(git rev-parse --abbrev-ref HEAD)
 
+# prompt if they need to amend the last commit
+echo "Amend the last commit? (y/n)"
+read -r answer
+if [ "$answer" == "y" ]; then
+    git commit --amend
+    git rebase --continue
+fi
+
 # prompt to force push
 echo "Force push to $current_branch? (y/n)"
 read -r answer

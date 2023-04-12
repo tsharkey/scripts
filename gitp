@@ -30,16 +30,11 @@ from termcolor import colored
 from pyutils.githelpers import *
 
 change_types = [
-    "fix: Bug fix for the user, not a fix to a build script",
-    "feat: New feature for the user, not a new feature for build script",
-    "chore: Updating grunt tasks etc; no production code change",
+    "fix: Bug fix for the user, not a fix to a build script, refactor, adding missing tests, etc.",
+    "feat: New feature",
     "docs: Documentation only changes",
     "WIP: Work in progress",
-    "refactor: refactoring production code, eg. renaming a variable",
-    "test: adding missing tests, refactoring tests; no production code change",
-    "build: Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)",
-    "ci: Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs)",
-    "perf: A code change that improves performance",
+    "build: Dependency changes or upgrades or how the application is built, changes to the ci/cd pipeline",
     "style: formatting, missing semi colons, etc; no production code change",
     "cancel: Cancel"
 ]

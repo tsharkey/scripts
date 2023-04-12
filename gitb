@@ -22,7 +22,7 @@ ticket_opts = [
 
 # Add a None option to the list to support branches without tickets
 ticket_opts.append('None')
-
+ 
 menu = TerminalMenu(ticket_opts, show_search_hint=True,
                     search_key=None, title="Select ticket to prefix branch with: ")
 ticket_index = menu.show()
