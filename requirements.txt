@@ -11,7 +11,7 @@ GitPython==3.1.27
 idna==3.3
 importlib-metadata==4.11.4
 isort==5.10.1
-jira==3.2.0
+jira==3.5.1
 keyring==23.5.1
 lastpass-python==0.3.2
 lazy-object-proxy==1.7.1
